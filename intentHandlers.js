@@ -12,14 +12,48 @@
 var textHelper = require('./textHelper'),
     storage = require('./storage'),
     AlexaSkill = require('./AlexaSkill');
+var running = true;
 
+function keepGameRunning() {
+    var speechOutput = {
+        speech: '<speak>'+
+        '<break time="1s"/>' +
+        '</speak>',
+        type: AlexaSkill.speechOutputType.SSML
+    }
+
+    var promtpOutPut = {
+        speech: '<speak>'+
+        '<break time="1s"/>' +
+        '</speak>',
+        type: AlexaSkill.speechOutputType.SSML
+    }
+
+    console.log('keepGameRunning');
+    response.ask(speechOutput, promtpOutPut);
+    /*while(running) {
+        setTimeout(function() {
+
+        }, 8000);
+    }*/
+}
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.HitIntent = function (intent, session, response) {
+        running = false;
         var playerName = intent.slots.PlayerName.value;
+
         //var player = getPlayer(playerName);
         //var playerHealth = player.health;
         var playerHealth = 10;
+
+
+        function getPlayer(playerName) {
+            var playerNameStub = 'Anton';
+            return playerNameStub;
+        }
+
+
         if(playerHealth > 0) {
             playerHealth--;
             if(playerHealth > 0) {
@@ -32,7 +66,9 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         }
 
         response.tell(speechOutput);
-        
+        running = true;
+        console.log('At the end of HitIntent');
+        keepGameRunning();
     };
 
     intentHandlers.AddPlayerIntent = function (intent, session, response) {
@@ -66,17 +102,14 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         }
 
         response.tell(speechOutput);
-        
+        console.log('At the end of the AddPlayerIntent')
+        keepGameRunning();
     };
 
 
     intentHandlers.StartGameIntent = function (intent, session, response) {
         response.ask('So we will start our game shortly! quick question though, who will be playing today?');        
     };
-
-
-
-
 
     //DEFAULT:
     //============================
