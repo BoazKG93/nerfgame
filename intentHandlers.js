@@ -14,28 +14,18 @@ var textHelper = require('./textHelper'),
     AlexaSkill = require('./AlexaSkill');
 var running = true;
 
-function keepGameRunning() {
-    var speechOutput = {
-        speech: '<speak>'+
-        '<break time="1s"/>' +
-        '</speak>',
-        type: AlexaSkill.speechOutputType.SSML
-    }
+function keepGameRunning(response, speechOutput) {
+
 
     var promtpOutPut = {
         speech: '<speak>'+
         '<break time="1s"/>' +
+        'I am listening to your screams on the battlefield mortal'+
         '</speak>',
         type: AlexaSkill.speechOutputType.SSML
     }
-
-    console.log('keepGameRunning');
-    response.ask(speechOutput, promtpOutPut);
-    /*while(running) {
-        setTimeout(function() {
-
-        }, 8000);
-    }*/
+    
+    response.ask(speechOutput,promtpOutPut);
 }
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
@@ -65,10 +55,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             var speechOutput = playerName + ' is already dead.';
         }
 
-        response.tell(speechOutput);
+        //response.tell(speechOutput);
         running = true;
         console.log('At the end of HitIntent');
-        keepGameRunning();
+        keepGameRunning(response, speechOutput);
     };
 
     intentHandlers.AddPlayerIntent = function (intent, session, response) {
@@ -101,9 +91,9 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             type: AlexaSkill.speechOutputType.SSML
         }
 
-        response.tell(speechOutput);
-        console.log('At the end of the AddPlayerIntent')
-        keepGameRunning();
+        //response.tell(speechOutput);
+        console.log('At the end of the AddPlayerIntent');
+        keepGameRunning(response, speechOutput);
     };
 
 
