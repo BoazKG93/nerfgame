@@ -17,9 +17,8 @@ var textHelper = require('./textHelper'),
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.HitIntent = function (intent, session, response) {
         var playerName = intent.slots.PlayerName.value;
-        //var player = getPlayer(playerName);
-        //var playerHealth = player.health;
-        var playerHealth = 10;
+        var player = getPlayer(playerName);
+        var playerHealth = player.health;
         if(playerHealth > 0) {
             playerHealth--;
             if(playerHealth > 0) {
