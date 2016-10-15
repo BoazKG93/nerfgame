@@ -12,13 +12,30 @@
 var textHelper = require('./textHelper'),
     storage = require('./storage'),
     AlexaSkill = require('./AlexaSkill');
+var running = true;
 
+function keepGameRunning(response, speechOutput) {
+
+
+    var promtpOutPut = {
+        speech: '<speak>'+
+        '<break time="1s"/>' +
+        'I am listening to your screams on the battlefield mortal'+
+        '</speak>',
+        type: AlexaSkill.speechOutputType.SSML
+    }
+    
+    response.ask(speechOutput,promtpOutPut);
+}
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.HitIntent = function (intent, session, response) {
+        running = false;
         var playerName = intent.slots.PlayerName.value;
         var player = getPlayer(playerName);
         var playerHealth = player.health;
+        var playerHealth = 10;
+
         if(playerHealth > 0) {
             playerHealth--;
             if(playerHealth > 0) {
@@ -30,8 +47,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             var speechOutput = playerName + ' is already dead.';
         }
 
-        response.tell(speechOutput);
-        
+        //response.tell(speechOutput);
+        running = true;
+        console.log('At the end of HitIntent');
+        keepGameRunning(response, speechOutput);
     };
 
     intentHandlers.AddPlayerIntent = function (intent, session, response) {
@@ -64,18 +83,15 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             type: AlexaSkill.speechOutputType.SSML
         }
 
-        response.tell(speechOutput);
-        
+        //response.tell(speechOutput);
+        console.log('At the end of the AddPlayerIntent');
+        keepGameRunning(response, speechOutput);
     };
 
 
     intentHandlers.StartGameIntent = function (intent, session, response) {
         response.ask('So we will start our game shortly! quick question though, who will be playing today?');        
     };
-
-
-
-
 
     //DEFAULT:
     //============================
