@@ -20,7 +20,7 @@ var registerEventHandlers = function (eventHandlers, skillContext) {
     };
 
     eventHandlers.onLaunch = function (launchRequest, session, response) {
-        response.ask('So we will start our game shortly! quick question though, who will be playing today?', '');
+        response.ask('Okay, let\'s get started! Who will be playing today?', '');
     };
 };
 exports.register = registerEventHandlers;
