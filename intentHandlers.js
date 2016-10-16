@@ -17,6 +17,26 @@ var client = require('twilio')('AC86c3899bd3d636ea0ca11f08852c62d7', 'abeafc9d2e
 var team1Name = 'Ninja Coders',
     team2Name = 'Teddy Bears';
 
+// http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
+function shuffle(array) {
+    var counter = array.length;
+
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        var index = Math.floor(Math.random() * counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        var temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+
+    return array;
+}
 
 function keepGameRunning(response, speechOutput) {
 
@@ -27,7 +47,7 @@ function keepGameRunning(response, speechOutput) {
         '</speak>',
         type: AlexaSkill.speechOutputType.SSML
     }
-    
+
     response.ask(speechOutput,promtpOutPut);
 }
 
@@ -48,7 +68,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 if(team1Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team1Name + ' is defeated, KO!';
                     game.reset();
-                    response.tell(speechOutput);            
+                    response.tell(speechOutput);
                 } else if (team2Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team2Name + ' is defeated, KO!';
                     game.reset();
@@ -56,7 +76,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
                 } else {
                     running = true;
-                    keepGameRunning(response, speechOutput);            
+                    keepGameRunning(response, speechOutput);
                 }
             } else {
                 response.tell("Oops. Something went wrong.");
@@ -93,7 +113,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
     };
 
     intentHandlers.AddPlayerIntent = function (intent, session, response) {
-        
+
         var allDoneCallback = function(speechOutput, success) {
             if (success) {
                 keepGameRunning(response, speechOutput);
@@ -102,35 +122,36 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             }
         };
 
-        
+
         var playerName1 = intent.slots.PlayerNameOne.value;
         var playerName2 = intent.slots.PlayerNameTwo.value;
         var playerName3 = intent.slots.PlayerNameThree.value;
         var playerName4 = intent.slots.PlayerNameFour.value;
         var players = [playerName1, playerName2, playerName3, playerName4];
+        players = shuffle(players);
         var counter = 0;
 
         storage.newGame(session, function(game) {
             players.forEach(function(item) {
                 if(item.length != 0) {
                         game.addPlayer(item);
-                        counter++; 
+                        counter++;
                         if(counter <= 2) {
                             game.addToTeam(item, team1Name);
                         } else {
                             game.addToTeam(item, team2Name);
                         }
-                                    
+
                 }
             });
 
-            var speechOutput = { 
+            var speechOutput = {
                 speech: '<speak><p><s>All players have been added, lets start having fun!</s>' +
-                '<s>our teams for today are:</s><s>' + 
+                '<s>our teams for today are:</s><s>' +
                 playerName1 + ' and ' +
-                playerName2 + ' are in team ' + team1Name + ' team</s><s> and ' +
+                playerName2 + ' are in team ' + team1Name + '</s><s> and ' +
                 playerName3 + ' and ' +
-                playerName4 + ' are in ' + team2Name + ' team.</s><s>I wish you all good luck and let the game begin!</s></p>'+
+                playerName4 + ' are in team ' + team2Name + '.</s><s>I wish you all good luck and let the game begin!</s></p>'+
                 '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
                 type: AlexaSkill.speechOutputType.SSML
             }
@@ -149,7 +170,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
 
         });
-        
+
     };
 
     intentHandlers.ResetGameIntent = function (intent, session, response) {
