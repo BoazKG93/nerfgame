@@ -1,28 +1,3 @@
-/* Example Intent:
-
-intentHandlers.InfoIntent = function (intent, session, response) {
-    var allDoneCallback = function(success) {
-        if (success) {
-            response.tell("Done.");
-        } else {
-            response.tell("Oops. Something went wrong.");
-        }
-    };
-    storage.loadGame(session, function(game){
-        game.reset();
-        game.addPlayer("Anton");
-        game.addPlayer("Alex");
-        game.addPlayer("Boaz");
-        game.addToTeam("Anton", "blue");
-        game.addToTeam("Alex", "blue");
-        game.addToTeam("Boaz", "red");
-        console.log(game.getTeam("blue"));
-        game.save(allDoneCallback);
-    });
-};
-
-*/
-
 'use strict';
 var AWS = require("aws-sdk");
 
@@ -38,9 +13,11 @@ var storage = (function () {
             console.log(data.data.S);
             this.data = JSON.parse(data.data.S);
         } else {
+            console.log('Starting a new game!');
             this.data = {
                 players: {}
             };
+            console.log('Started game!');
         }
         this._session = session;
     }
