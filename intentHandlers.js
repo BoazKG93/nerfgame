@@ -211,7 +211,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 players[3] + ' are in team ' + team2Name + '</s>' +
                 '<s>' + players[2] + ' is ' + calloutTags[0] + ' ' + team2NameSingular + ' and ' +
                 players[3] + ' is ' + calloutTags[1] + ' ' + team2NameSingular + ' ' + '</s>' +
-                '<s>I wish you all good luck and let the game begin!</s></p>'+
+                '<s>let the game begin and may the odds be in your favor!</s></p>'+
                 '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
                 type: AlexaSkill.speechOutputType.SSML
             };
@@ -235,14 +235,14 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 //Sende SMS to players for the capture mode
                 //Team red
                 client.messages.create({
-                    body: 'Your code is "'+ shuffledCodeWords[0] +'"',
+                    body: team1Name + '\'s code is "'+ shuffledCodeWords[0] +'"',
                     to: '+4915158055841',
                     from: "+4915735985873 "
                 });
 
                 //Team blue
                 client.messages.create({
-                    body: 'Your code is "'+ shuffledCodeWords[1] +'"',
+                    body: team2Name + '\'s code is "'+ shuffledCodeWords[1] +'"',
                     to: "+4917661254477",
                     from: "+4915735985873 "
                 });
@@ -262,6 +262,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.FoundFlagIntent = function (intent, session, response) {
         storage.loadGame(session, function(game) {
             if(game.getGameMode(2) == 2){
+                if (!intent.slots.codeWords.value) {
+                    response.ask("Could you repeat that?");
+                    return;
+                }
                 if(intent.slots.codeWords.value.toLowerCase().valueOf() == game.getCodeWord1().toLowerCase().valueOf()){
                     var speechOutput = team1Name + ' has found the code and wins the round!';
                     game.setGameState(2);
