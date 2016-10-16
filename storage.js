@@ -1,8 +1,6 @@
 'use strict';
 var AWS = require("aws-sdk");
 
-var numbers = ["One", "Two", "Three", "Four"];
-
 var storage = (function () {
     var dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
@@ -52,7 +50,7 @@ var storage = (function () {
                 this.data.teamCount[teamName]++;
             }
             this.data.players[name].team = teamName;
-            this.data.players[name].callout = teamName + " " + numbers[this.data.teamCount[teamName] - 1];
+            this.data.players[name].callout = teamName + " " + this.data.teamCount[teamName];
         },
 
         decreaseHealth: function(name) {
