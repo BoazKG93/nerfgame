@@ -124,7 +124,9 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                         type: AlexaSkill.speechOutputType.SSML
                     };
                 } else {
-                    var speechOutput = playerName + ' is out.';
+                    var outWords = [playerName + "is out", "It's over for " + playerName];
+                    var shuffledOutWords = shuffle(outWords);
+                    var speechOutput = shuffledOutWords[0];
                 }
             } else {
                 var speechOutput = playerName + ' is already out.';
