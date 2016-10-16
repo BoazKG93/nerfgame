@@ -67,11 +67,9 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
                 if(team1Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team1Name + ' is defeated, KO!';
-                    game.reset();
                     response.tell(speechOutput);
                 } else if (team2Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team2Name + ' is defeated, KO!';
-                    game.reset();
                     response.tell(speechOutput);
 
                 } else {
@@ -94,14 +92,14 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 game.decreaseHealth(playerName);
                 if(playerHealth > 0) {
                      var speechOutput = {
-                         speech: "<speak><break time='1s'/></speak>",
-                         type: AlexaSkill.speechOutputType.SSML
+                        speech: "<speak><audio src='https://s3.amazonaws.com/soundsnerf/Oxygen-Im-New-Mail.mp3'/></speak>",
+                        type: AlexaSkill.speechOutputType.SSML
                      }
                 } else {
                     var speechOutput = playerName + ' is out.';
                 }
             } else {
-                var speechOutput = playerName + ' is already dead.';
+                var speechOutput = playerName + ' is already out.';
             }
 
             game.save(allDoneCallback.bind(this, game, speechOutput));
