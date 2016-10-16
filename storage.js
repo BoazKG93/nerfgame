@@ -34,7 +34,7 @@ var storage = (function () {
             };
         },
         setGameMode: function(gameMode){
-            this.data.gameMode = 2;
+            this.data.gameMode = gameMode;
         },
         getGameMode: function(name) {
             if(!this.data.gameMode){

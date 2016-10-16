@@ -16,7 +16,6 @@ var running = true;
 var client = require('twilio')('AC86c3899bd3d636ea0ca11f08852c62d7', 'abeafc9d2e485adb038f9e7dac98d58f');
 var team1Name = 'Ninjas',
     team2Name = 'Pirates';
-var isCaptureMode = false;
 // http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
 function shuffle(array) {
     var counter = array.length;
@@ -78,7 +77,6 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
                 if(team1Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team1Name + ' is defeated, KO!';
-                    game.reset();
                     response.tell(speechOutput);
                 } else if (team2Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team2Name + ' is defeated, KO!';
@@ -173,6 +171,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
     intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
         storage.loadGame(session, function(game) {
+            game.setGameMode(2);
             game.save(function() {
                 var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
                 var shuffledCodeWords = shuffle(codeWords);
@@ -196,9 +195,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
     };
 
     intentHandlers.ResetGameIntent = function (intent, session, response) {
-        isCaptureMode = false;
+        storage.loadGame(session, function(game) {
             game.reset();
             response.tell('Ready for the next match!');
+        });
     };
 
     //DEFAULT:
