@@ -100,7 +100,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         running = false;
 
         storage.loadGame(session, function(game) {
-            if (game.getGameState !== 1) {
+            if (game.getGameState() !== 1) {
                 response.ask("Could you repeat that?");
                 return;
             }
