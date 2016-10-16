@@ -33,7 +33,7 @@ function keepGameRunning(response, speechOutput) {
 
 function getTeamHealth(teamName, game) {
     var team = game.getTeam(teamName);
-    teamHealth = team[0].health + team[1].health;
+    var teamHealth = team[0].health + team[1].health;
     return teamHealth;
 }
 
@@ -143,6 +143,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.ResetGameIntent = function (intent, session, response) {
         storage.loadGame(session, function(game) {
             game.reset();
+            response.tell('Ready for the next match!');
         });
     };
 
