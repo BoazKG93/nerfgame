@@ -74,8 +74,24 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         });
     };
 
+    intentHandlers.ScoreIntent = function(intent, session, response) {
+        storage.loadGame(session, function(game) {
+            if (game.getGameState() !== 1) {
+                response.ask("The game hasn't started yet.");
+                return;
+            }
+
+            var team1Health = getTeamHealth(team1Name, game),
+                team2Health = getTeamHealth(team2Name, game);
+
+            var speechOutput = "Team " + team1Name + ": " + team1Health +
+                                ", team " + team2Name + ": " + team2Health;
+            response.ask(speechOutput);
+        });
+    };
+
     intentHandlers.HitIntent = function (intent, session, response) {
-        var allDoneCallback = function(game, speechOutput, success) {
+        var allDoneCallback = function(game, playerName, speechOutput, success) {
             if (success) {
 
                 var team1Health = getTeamHealth(team1Name, game),
@@ -138,7 +154,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 var speechOutput = playerName + ' is already out.';
             }
 
-            game.save(allDoneCallback.bind(this, game, speechOutput));
+            game.save(allDoneCallback.bind(this, game, playerName, speechOutput));
 
         });
     };
@@ -223,7 +239,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                     from: "+4915735985873 "
                 });
 
-                response.ask('Okay, let\'s get started with a capture game! Who will be playing today?', '');
+                response.ask('Okay, let\'s get started with a capture game! Who will be playing this round?', '');
             });
         });
     };
