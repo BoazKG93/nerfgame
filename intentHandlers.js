@@ -93,11 +93,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 playerHealth--;
                 game.decreaseHealth(playerName);
                 if(playerHealth > 0) {
-                    // var speechOutput = {
-                    //     speech: "<audio src='https://s3.amazonaws.com/alexanerfbattlesounds/hit_sound.mp3'/>",
-                    //     type: AlexaSkill.speechOutputType.SSML
-                    // }
-                    var speechOutput = "a hit!";
+                     var speechOutput = {
+                         speech: "<speak><break time='1s'/></speak>",
+                         type: AlexaSkill.speechOutputType.SSML
+                     }
                 } else {
                     var speechOutput = playerName + ' is out.';
                 }
