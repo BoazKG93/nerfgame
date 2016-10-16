@@ -45,6 +45,23 @@ var storage = (function () {
                 return this.data.gameMode;
             }
         },
+
+        /*
+        * 0 = init
+        * 1 = playing
+        * 2 = done
+        */
+        setGameState: function(state) {
+            this.data.state = state;
+        },
+
+        getGameState: function(state) {
+            if (!this.data.state) {
+                return 0;
+            }
+            return this.data.state;
+        },
+
         addToTeam: function(name, teamName) {
             if (!this.data.teamCount[teamName]) {
                 this.data.teamCount[teamName] = 1;

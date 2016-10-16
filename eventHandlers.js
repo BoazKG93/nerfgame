@@ -21,6 +21,7 @@ var registerEventHandlers = function (eventHandlers, skillContext) {
 
     eventHandlers.onLaunch = function (launchRequest, session, response) {
         storage.newGame(session, function(game) {
+            game.setGameState(0);
             game.save(function() {
                 response.ask('Okay, let\'s get started! Who will be playing today?', '');
             });

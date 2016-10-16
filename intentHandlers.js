@@ -65,6 +65,7 @@ function getTeamHealth(teamName, game) {
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.StartGameIntent = function (intent, session, response) {
         storage.newGame(session, function(game) {
+            game.setGameState(0);
             game.save(function() {
                 response.ask('Okay, let\'s get started! Who will be playing today?', '');
             });
@@ -80,9 +81,11 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
                 if(team1Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team1Name + ' is defeated, KO!';
+                    game.setGameState(2);
                     response.tell(speechOutput);
                 } else if (team2Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team2Name + ' is defeated, KO!';
+                    game.setGameState(2);
                     response.tell(speechOutput);
 
                 } else {
@@ -96,13 +99,18 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
         running = false;
 
-        if (!intent.slots.PlayerName.value) {
-            response.ask("Could you repeat that?");
-            return;
-        }
-
-        var playerName = intent.slots.PlayerName.value;
         storage.loadGame(session, function(game) {
+            if (game.getGameState !== 1) {
+                response.ask("Could you repeat that?");
+                return;
+            }
+
+            if (!intent.slots.PlayerName.value) {
+                response.ask("Could you repeat that?");
+                return;
+            }
+            var playerName = intent.slots.PlayerName.value;
+
             var player = game.getPlayerByCallout(playerName);
             var playerHealth = player.health;
             playerName = player.name;
@@ -138,15 +146,21 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         };
 
 
-        var playerName1 = intent.slots.PlayerNameOne.value;
-        var playerName2 = intent.slots.PlayerNameTwo.value;
-        var playerName3 = intent.slots.PlayerNameThree.value;
-        var playerName4 = intent.slots.PlayerNameFour.value;
-        var players = [playerName1, playerName2, playerName3, playerName4];
-        players = shuffle(players);
-        var counter = 0;
 
+        var counter = 0;
         storage.loadGame(session, function(game) {
+            if(game.getGameState() !== 0) {
+                response.ask("Could you repeat that?");
+                return;
+            }
+
+            var playerName1 = intent.slots.PlayerNameOne.value;
+            var playerName2 = intent.slots.PlayerNameTwo.value;
+            var playerName3 = intent.slots.PlayerNameThree.value;
+            var playerName4 = intent.slots.PlayerNameFour.value;
+            var players = [playerName1, playerName2, playerName3, playerName4];
+            players = shuffle(players);
+
             players.forEach(function(item) {
                 if(item.length != 0) {
                         game.addPlayer(item);
@@ -170,17 +184,19 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 '<s>' + players[2] + ' and ' +
                 players[3] + ' are in team ' + team2Name + '</s>' +
                 '<s>' + players[2] + ' is ' + calloutTags[0] + ' ' + team2NameSingular + ' and ' +
-                players[3] + ' is ' + calloutTags[0] + ' ' + team2NameSingular + ' ' + '</s>' +
+                players[3] + ' is ' + calloutTags[1] + ' ' + team2NameSingular + ' ' + '</s>' +
                 '<s>I wish you all good luck and let the game begin!</s></p>'+
                 '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
                 type: AlexaSkill.speechOutputType.SSML
             };
+            game.setGameState(1);
             game.save(allDoneCallback.bind(this, speechOutput));
         });
     };
 
     intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
         storage.newGame(session, function(game) {
+            game.setGameState(0);
             game.setGameMode(2);
             game.save(function() {
                 var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
