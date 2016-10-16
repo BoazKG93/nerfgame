@@ -65,6 +65,16 @@ var storage = (function () {
             return this.data.players[name];
         },
 
+        getPlayerByCallout: function(callout) {
+            for (var playerName in this.data.players) {
+                var player = this.data.players[playerName];
+                if (player.callout.valueOf() == callout.valueOf()) {
+                    return player;
+                }
+            }
+            return null;
+        },
+
         getTeam: function(teamName) {
             var res = [];
             for (var playerName in this.data.players) {
