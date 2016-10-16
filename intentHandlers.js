@@ -101,17 +101,17 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
             if(playerHealth > 0) {
                 playerHealth--;
-                game.decreaseHealth(playerName);
+                game.decreaseHealth(player.name);
                 if(playerHealth > 0) {
                      var speechOutput = {
                         speech: "<speak><audio src='https://s3.amazonaws.com/soundsnerf/Oxygen-Im-New-Mail.mp3'/></speak>",
                         type: AlexaSkill.speechOutputType.SSML
                     };
                 } else {
-                    var speechOutput = playerName + ' is out.';
+                    var speechOutput = player.name + ' is out.';
                 }
             } else {
-                var speechOutput = playerName + ' is already out.';
+                var speechOutput = player.name + ' is already out.';
             }
 
             game.save(allDoneCallback.bind(this, game, speechOutput));
