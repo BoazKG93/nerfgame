@@ -138,7 +138,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 game.decreaseHealth(playerName);
                 if(playerHealth > 0) {
                     var randomNum = Math.floor((Math.random() * 10) + 1);
-                    if(randomNum > 0) {
+                    if(randomNum > 4) {
                         var complement = complements[Math.floor((Math.random() * 2) + 1)];
                     } else {
                         var complement = "";
@@ -224,7 +224,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         storage.newGame(session, function(game) {
             game.setGameState(0);
             game.setGameMode(2);
-            var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
+            var codeWords = ["Hacker", "Alien", "Karaoke" , "Unicorn", "Cookie", "Coffee"];
             var shuffledCodeWords = shuffle(codeWords);
             game.setCodeWord1(shuffledCodeWords[0]);
             game.setCodeWord2(shuffledCodeWords[1]);
