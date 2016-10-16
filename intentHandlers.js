@@ -58,6 +58,14 @@ function getTeamHealth(teamName, game) {
 }
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
+    intentHandlers.StartGameIntent = function (intent, session, response) {
+        response.ask('Okay, let\'s get started! Who will be playing today?', '');
+    },
+
+    intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
+        response.ask('Okay, let\'s get started! Who will be playing today?', '');
+    },
+
     intentHandlers.HitIntent = function (intent, session, response) {
         var allDoneCallback = function(game, speechOutput, success) {
             if (success) {
@@ -145,10 +153,10 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             var speechOutput = {
                 speech: '<speak><p><s>All players have been added, lets start having fun!</s>' +
                 '<s>our teams for today are:</s><s>' +
-                playerName1 + ' and ' +
-                playerName2 + ' are in team ' + team1Name + '</s><s> and ' +
-                playerName3 + ' and ' +
-                playerName4 + ' are in team ' + team2Name + '.</s><s>I wish you all good luck and let the game begin!</s></p>'+
+                players[0].name + ' and ' +
+                players[1].name + ' are in team ' + team1Name + '</s><s> and ' +
+                players[2].name + ' and ' +
+                players[3].name + ' are in team ' + team2Name + '.</s><s>I wish you all good luck and let the game begin!</s></p>'+
                 '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
                 type: AlexaSkill.speechOutputType.SSML
             }
