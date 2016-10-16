@@ -61,11 +61,12 @@ function getTeamHealth(teamName, game) {
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.StartGameIntent = function (intent, session, response) {
-        response.ask('Okay, let\'s get started! Who will be playing today?', '');
-    },
+        storage.loadGame(session, function(game) {
+            game.save(function() {
+                response.ask('Okay, let\'s get started! Who will be playing today?', '');
+            });
+        });
 
-    intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
-        response.ask('Okay, let\'s get started! Who will be playing today?', '');
     },
 
     intentHandlers.HitIntent = function (intent, session, response) {
@@ -139,7 +140,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         players = shuffle(players);
         var counter = 0;
 
-        storage.newGame(session, function(game) {
+        storage.loadGame(session, function(game) {
             players.forEach(function(item) {
                 if(item.length != 0) {
                         game.addPlayer(item);
@@ -174,40 +175,34 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
     }
 
-
-
-    intentHandlers.StartGameIntent = function (intent, session, response) {
-        response.ask('Okay, let\'s get started! Who will be playing today?', '');
-    };
-
     intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
-        isCaptureMode = true;
-        var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
-        var shuffledCodeWords = shuffle(codeWords);
+        storage.loadGame(session, function(game) {
+            game.save(function() {
+                var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
+                var shuffledCodeWords = shuffle(codeWords);
 
-        //Sende SMS to players for the capture mode
-        client.messages.create({
-            body: 'Your code is "'+ shuffledCodeWords[0] +'"',
-            to: '+4915158055841',
-            from: "+4915735985873 "
+                //Sende SMS to players for the capture mode
+                client.messages.create({
+                    body: 'Your code is "'+ shuffledCodeWords[0] +'"',
+                    to: '+4915158055841',
+                    from: "+4915735985873 "
+                });
+
+                client.messages.create({
+                    body: 'Your code is "'+ shuffledCodeWords[1] +'"',
+                    to: "+4917661254477",
+                    from: "+4915735985873 "
+                });
+
+                response.ask('Okay, let\'s get started with a capture game! Who will be playing today?', '');
+            });
         });
-
-        client.messages.create({
-            body: 'Your code is "'+ shuffledCodeWords[1] +'"',
-            to: "+4917661254477",
-            from: "+4915735985873 "
-        });
-
-        response.ask('Okay, let\'s get started with a capture game! Who will be playing today?', '');
-
     };
 
     intentHandlers.ResetGameIntent = function (intent, session, response) {
         isCaptureMode = false;
-        storage.loadGame(session, function(game) {
             game.reset();
             response.tell('Ready for the next match!');
-        });
     };
 
     //DEFAULT:
