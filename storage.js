@@ -68,6 +68,7 @@ var storage = (function () {
         getPlayerByCallout: function(callout) {
             for (var playerName in this.data.players) {
                 var player = this.data.players[playerName];
+                console.log(player.callout.toLowerCase().valueOf() + " == " + callout.toLowerCase().valueOf());
                 if (player.callout.toLowerCase().valueOf() == callout.toLowerCase().valueOf()) {
                     return player;
                 }
