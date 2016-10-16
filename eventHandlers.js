@@ -20,7 +20,11 @@ var registerEventHandlers = function (eventHandlers, skillContext) {
     };
 
     eventHandlers.onLaunch = function (launchRequest, session, response) {
-        response.ask('Okay, let\'s get started! Who will be playing today?', '');
+        storage.newGame(session, function(game) {
+            game.save(function() {
+                response.ask('Okay, let\'s get started! Who will be playing today?', '');
+            });
+        });
     };
 };
 exports.register = registerEventHandlers;

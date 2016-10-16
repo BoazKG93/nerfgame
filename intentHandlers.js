@@ -60,12 +60,11 @@ function getTeamHealth(teamName, game) {
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.StartGameIntent = function (intent, session, response) {
-        storage.loadGame(session, function(game) {
+        storage.newGame(session, function(game) {
             game.save(function() {
                 response.ask('Okay, let\'s get started! Who will be playing today?', '');
             });
         });
-
     },
 
     intentHandlers.HitIntent = function (intent, session, response) {
@@ -170,7 +169,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
     };
 
     intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
-        storage.loadGame(session, function(game) {
+        storage.newGame(session, function(game) {
             game.setGameMode(2);
             game.save(function() {
                 var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
