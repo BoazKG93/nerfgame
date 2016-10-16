@@ -12,13 +12,14 @@ var storage = (function () {
             console.log('Game init');
             console.log(data);
             if (data.data) {
-                this.data = JSON.parse(data.data.S);    
+                this.data = JSON.parse(data.data.S);
             } else {
                 this.data = data;
             }
         } else {
             this.data = {
-                players: {}
+                players: {},
+                teamCount: {}
             };
         }
         this._session = session;
@@ -34,7 +35,13 @@ var storage = (function () {
         },
 
         addToTeam: function(name, teamName) {
+            if (!this.data.teamCount[teamName]) {
+                this.data.teamCount[teamName] = 1;
+            } else {
+                this.data.teamCount[teamName]++;
+            }
             this.data.players[name].team = teamName;
+            this.data.players[name].callout = teamName + " " + this.data.teamCount[teamName];
         },
 
         decreaseHealth: function(name) {
@@ -90,7 +97,8 @@ var storage = (function () {
 
         reset: function() {
             this.data = {
-                players: {}
+                players: {},
+                teamCount: {}
             };
         }
     };
