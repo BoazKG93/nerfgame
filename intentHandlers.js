@@ -41,7 +41,7 @@ function shuffle(array) {
     return array;
 }
 
-complements = [ "Wow that's a great shot!", "Nice!", "Impressive"];
+var complements = [ "Wow that's a great shot!", "Nice!", "Impressive"];
 
 function keepGameRunning(response, speechOutput) {
 
@@ -224,17 +224,23 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         storage.newGame(session, function(game) {
             game.setGameState(0);
             game.setGameMode(2);
+            var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
+            var shuffledCodeWords = shuffle(codeWords);
+            game.setCodeWord1(shuffledCodeWords[0]);
+            game.setCodeWord2(shuffledCodeWords[1]);
+
             game.save(function() {
-                var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
-                var shuffledCodeWords = shuffle(codeWords);
+
 
                 //Sende SMS to players for the capture mode
+                //Team red
                 client.messages.create({
                     body: 'Your code is "'+ shuffledCodeWords[0] +'"',
                     to: '+4915158055841',
                     from: "+4915735985873 "
                 });
 
+                //Team blue
                 client.messages.create({
                     body: 'Your code is "'+ shuffledCodeWords[1] +'"',
                     to: "+4917661254477",
@@ -250,6 +256,25 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         storage.loadGame(session, function(game) {
             game.reset();
             response.tell('Ready for the next match!');
+        });
+    };
+
+    intentHandlers.FoundFlagIntent = function (intent, session, response) {
+        storage.loadGame(session, function(game) {
+            if(game.getGameMode(2) == 2){
+                if(intent.slots.codeWords.value.valueOf() == game.getCodeWord1().valueOf()){
+                    var speechOutput = team1Name + ' has found the code and wins the round!';
+                    game.setGameState(2);
+                    response.tell(speechOutput);
+                }else if (intent.slots.codeWords.value.valueOf()  == game.getCodeWord2().valueOf()){
+                    var speechOutput = team2Name + ' has found the code and wins the round!';
+                    game.setGameState(2);
+                    response.tell(speechOutput);
+                }else {
+                    response.ask("This doesn't seem to be a codeword. Can you repeat?");
+                }
+                response.tell('Ready for the next match!');
+            }
         });
     };
 
