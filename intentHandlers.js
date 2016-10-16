@@ -262,11 +262,11 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.FoundFlagIntent = function (intent, session, response) {
         storage.loadGame(session, function(game) {
             if(game.getGameMode(2) == 2){
-                if(intent.slots.codeWords.value.valueOf() == game.getCodeWord1().valueOf()){
+                if(intent.slots.codeWords.value.toLowerCase().valueOf() == game.getCodeWord1().toLowerCase().valueOf()){
                     var speechOutput = team1Name + ' has found the code and wins the round!';
                     game.setGameState(2);
                     response.tell(speechOutput);
-                }else if (intent.slots.codeWords.value.valueOf()  == game.getCodeWord2().valueOf()){
+                }else if (intent.slots.codeWords.value.toLowerCase().valueOf()  == game.getCodeWord2().toLowerCase().valueOf()){
                     var speechOutput = team2Name + ' has found the code and wins the round!';
                     game.setGameState(2);
                     response.tell(speechOutput);
