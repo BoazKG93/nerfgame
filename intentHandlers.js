@@ -65,7 +65,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 response.ask('Okay, let\'s get started! Who will be playing today?', '');
             });
         });
-    },
+    };
 
     intentHandlers.HitIntent = function (intent, session, response) {
         var allDoneCallback = function(game, speechOutput, success) {
