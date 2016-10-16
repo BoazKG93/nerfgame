@@ -93,6 +93,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         };
 
         running = false;
+        console.log(intent.slots.PlayerName);
         var playerName = intent.slots.PlayerName.value;
         storage.loadGame(session, function(game) {
             console.log("playerName " + playerName);
@@ -108,6 +109,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                         type: AlexaSkill.speechOutputType.SSML
                     };
                 } else {
+                    console.log("player.name " + player.name);
                     var speechOutput = player.name + ' is out.';
                 }
             } else {
