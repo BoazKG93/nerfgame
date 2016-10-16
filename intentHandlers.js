@@ -137,12 +137,16 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
             //Sende SMS to players for the capture mode
             client.messages.create({
-                body: 'Your code is "Hacker',
+                body: 'Your code is "'+ '' +'"',
                 to: '+4915158055841',
                 from: "+4915735985873 "
-
             });
 
+            client.messages.create({
+                body: 'Your code is "'+ '' +'"',
+                to: "+4917661254477",
+                from: "+4915735985873 "
+            });
 
             game.save(allDoneCallback.bind(this, speechOutput));
 
