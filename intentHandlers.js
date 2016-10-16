@@ -93,10 +93,14 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         };
 
         running = false;
-        console.log(intent.slots.PlayerName);
+
+        if (!intent.slots.PlayerName.value) {
+            response.ask("Could you repeat that?");
+            return;
+        }
+
         var playerName = intent.slots.PlayerName.value;
         storage.loadGame(session, function(game) {
-            console.log("playerName " + playerName);
             var player = game.getPlayerByCallout(playerName);
             var playerHealth = player.health;
 
@@ -156,7 +160,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
             var speechOutput = {
                 speech: '<speak><p><s>Alright, lets start having fun!</s>' +
-                '<s>our teams for today are:</s><s>' +
+                '<s>our teams for this round are:</s><s>' +
                 players[0] + ' and ' +
                 players[1] + ' are in team ' + team1Name + '</s>' +
                 '<s>' + players[0] + ' is ' + team1NameSingular + ' ' + ' 1 and ' +
