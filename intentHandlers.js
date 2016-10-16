@@ -41,6 +41,8 @@ function shuffle(array) {
     return array;
 }
 
+complements = [ "Wow that's a great shot!", "Nice!", "Impressive"];
+
 function keepGameRunning(response, speechOutput) {
 
     var promtpOutPut = {
@@ -119,8 +121,14 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 playerHealth--;
                 game.decreaseHealth(playerName);
                 if(playerHealth > 0) {
+                    var randomNum = Math.floor((Math.random() * 10) + 1);
+                    if(randomNum > 7) {
+                        var complement = complements[Math.floor((Math.random() * 3) + 1)];
+                    } else {
+                        var complement = "";
+                    }
                      var speechOutput = {
-                        speech: "<speak><audio src='https://s3.amazonaws.com/soundsnerf/Oxygen-Im-New-Mail.mp3'/></speak>",
+                        speech: "<speak><audio src='https://s3.amazonaws.com/soundsnerf/Oxygen-Im-New-Mail.mp3'/>"+complement+"</speak>",
                         type: AlexaSkill.speechOutputType.SSML
                     };
                 } else {
