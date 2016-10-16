@@ -14,13 +14,16 @@ var textHelper = require('./textHelper'),
     AlexaSkill = require('./AlexaSkill');
 var running = true;
 
+var team1Name = 'Ninja Coders',
+    team2Name = 'Teddy Bears';
+
 function keepGameRunning(response, speechOutput) {
 
 
     var promtpOutPut = {
         speech: '<speak>'+
         '<break time="1s"/>' +
-        'I am listening to your screams on the battlefield mortal'+
+        ' '+
         '</speak>',
         type: AlexaSkill.speechOutputType.SSML
     }
@@ -28,24 +31,24 @@ function keepGameRunning(response, speechOutput) {
     response.ask(speechOutput,promtpOutPut);
 }
 
+function getTeamHealth(teamName) {
+    var team = getTeam(teamName);
+    teamHealth = team[0].health + team[1].health;
+    return teamHealth;
+}
+
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.HitIntent = function (intent, session, response) {
         running = false;
         var playerName = intent.slots.PlayerName.value;
-
         //var player = getPlayer(playerName);
         //var playerHealth = player.health;
         var playerHealth = 10;
 
 
-        function getPlayer(playerName) {
-            var playerNameStub = 'Anton';
-            return playerNameStub;
-        }
-
-
         if(playerHealth > 0) {
             playerHealth--;
+            decreaseHealth(player);
             if(playerHealth > 0) {
                 var speechOutput = playerName + ' has been hit and has ' + playerHealth + ' health points left!';
             } else {
@@ -55,10 +58,20 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             var speechOutput = playerName + ' is already dead.';
         }
 
-        //response.tell(speechOutput);
-        running = true;
-        console.log('At the end of HitIntent');
-        keepGameRunning(response, speechOutput);
+        var team1Health = getTeamHealth(team1Name),
+            team2Health = getTeamHealth(team2Name);
+
+        if(team1Health == 0) {
+            var speechOutput = playerName + ' has been hit and team ' + team1Name + ' is defeated, KO!';
+            response.tell(speechOutput);
+        } else if (team2Health == 0) {
+            var speechOutput = playerName + ' has been hit and team ' + team2Name + ' is defeated, KO!';
+            response.tell(speechOutput);
+        } else {
+            running = true;
+            keepGameRunning(response, speechOutput);            
+        }
+
     };
 
     intentHandlers.AddPlayerIntent = function (intent, session, response) {
@@ -84,9 +97,9 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             speech: '<speak><p><s>All players have been added, lets start having fun!</s>' +
             '<s>our teams for today are:</s><s>' + 
             playerName1 + ' and ' +
-            playerName2 + ' are in team Ninja Coders team</s><s> and ' +
+            playerName2 + ' are in team ' + team1Name + ' team</s><s> and ' +
             playerName3 + ' and ' +
-            playerName4 + ' are in Teddy Bears team.</s><s>I wish you all good luck and let the game begin!</s></p>'+
+            playerName4 + ' are in ' + team2Name + ' team.</s><s>I wish you all good luck and let the game begin!</s></p>'+
             '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
             type: AlexaSkill.speechOutputType.SSML
         }
@@ -98,7 +111,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
 
     intentHandlers.StartGameIntent = function (intent, session, response) {
-        response.ask('So we will start our game shortly! quick question though, who will be playing today?');        
+        response.ask('So we will start our game shortly! quick question though, who will be playing today?', '');        
     };
 
     //DEFAULT:

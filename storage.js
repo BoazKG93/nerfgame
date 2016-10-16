@@ -1,11 +1,26 @@
-/**
-    Copyright 2014-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+/* Example Intent:
 
-    Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
+intentHandlers.InfoIntent = function (intent, session, response) {
+    var allDoneCallback = function(success) {
+        if (success) {
+            response.tell("Done.");
+        } else {
+            response.tell("Oops. Something went wrong.");
+        }
+    };
+    storage.loadGame(session, function(game){
+        game.reset();
+        game.addPlayer("Anton");
+        game.addPlayer("Alex");
+        game.addPlayer("Boaz");
+        game.addToTeam("Anton", "blue");
+        game.addToTeam("Alex", "blue");
+        game.addToTeam("Boaz", "red");
+        console.log(game.getTeam("blue"));
+        game.save(allDoneCallback);
+    });
+};
 
-        http://aws.amazon.com/apache2.0/
-
-    or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 */
 
 'use strict';
@@ -19,51 +34,85 @@ var storage = (function () {
      */
     function Game(session, data) {
         if (data) {
-            this.data = data;
+            console.log("Restoring data");
+            console.log(data.data.S);
+            this.data = JSON.parse(data.data.S);
         } else {
             this.data = {
-                players: [],
-                scores: {}
+                players: {}
             };
         }
         this._session = session;
     }
 
     Game.prototype = {
-        isEmptyScore: function () {
-            //check if any one had non-zero score,
-            //it can be used as an indication of whether the game has just started
-            var allEmpty = true;
-            var gameData = this.data;
-            gameData.players.forEach(function (player) {
-                if (gameData.scores[player] !== 0) {
-                    allEmpty = false;
-                }
-            });
-            return allEmpty;
+        addPlayer: function(name) {
+            this.data.players[name] = {
+                name: name,
+                health: 3,
+                team: "none"
+            };
         },
-        save: function (callback) {
-            //save the game states in the session,
-            //so next time we can save a read from dynamoDB
+
+        addToTeam: function(name, teamName) {
+            this.data.players[name].team = teamName;
+        },
+
+        decreaseHealth: function(name) {
+            this.data.players[name].health--;
+        },
+
+        updatePlayerHealth: function(name, health) {
+            this.data.players[name].health = health;
+        },
+
+        getPlayer: function(name) {
+            return this.data.players[name];
+        },
+
+        getTeam: function(teamName) {
+            var res = [];
+            for (var playerName in this.data.players) {
+                var player = this.data.players[playerName];
+                if (player.team.valueOf() == teamName.valueOf()) {
+                    res.push(player);
+                }
+            }
+            return res;
+        },
+
+        save: function(callback) {
             this._session.attributes.currentGame = this.data;
+            console.log("saving data");
+            console.log(this.data);
+            console.log(JSON.stringify(this.data));
             dynamodb.putItem({
-                TableName: 'ScoreKeeperUserData',
+                TableName: 'State',
                 Item: {
-                    CustomerId: {
-                        S: this._session.user.userId
+                    gameId: {
+                        N: "0"
                     },
-                    Data: {
+                    data: {
                         S: JSON.stringify(this.data)
                     }
                 }
             }, function (err, data) {
+                console.log("game save");
+                console.log("err: ");
+                console.log(err);
                 if (err) {
                     console.log(err, err.stack);
                 }
                 if (callback) {
-                    callback();
+                    callback(true);
                 }
             });
+        },
+
+        reset: function() {
+            this.data = {
+                players: {}
+            };
         }
     };
 
@@ -74,27 +123,32 @@ var storage = (function () {
                 callback(new Game(session, session.attributes.currentGame));
                 return;
             }
-            dynamodb.getItem({
-                TableName: 'ScoreKeeperUserData',
+
+            console.log("loadGame");
+            var params = {
+                TableName: "State",
                 Key: {
-                    CustomerId: {
-                        S: session.user.userId
-                    }
-                }
-            }, function (err, data) {
+                    "gameId": {"N": "0"}
+                },
+                AttributesToGet: ["data"]
+            };
+
+            dynamodb.getItem(params, function(err, data) {
+                console.log("err:");
+                console.log(err);
+                console.log("data:");
+                console.log(data);
                 var currentGame;
-                if (err) {
-                    console.log(err, err.stack);
-                    currentGame = new Game(session);
-                    session.attributes.currentGame = currentGame.data;
-                    callback(currentGame);
-                } else if (data.Item === undefined) {
+                if (err || data.Item === undefined) {
+                    if (err) {
+                        console.log(err, err.stack);
+                    }
+
                     currentGame = new Game(session);
                     session.attributes.currentGame = currentGame.data;
                     callback(currentGame);
                 } else {
-                    console.log('get game from dynamodb=' + data.Item.Data.S);
-                    currentGame = new Game(session, JSON.parse(data.Item.Data.S));
+                    currentGame = new Game(session, data.Item);
                     session.attributes.currentGame = currentGame.data;
                     callback(currentGame);
                 }
@@ -102,7 +156,8 @@ var storage = (function () {
         },
         newGame: function (session) {
             return new Game(session);
-        }
+        },
     };
 })();
+
 module.exports = storage;
