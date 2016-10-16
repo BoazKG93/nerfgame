@@ -16,7 +16,7 @@ var running = true;
 var client = require('twilio')('AC86c3899bd3d636ea0ca11f08852c62d7', 'abeafc9d2e485adb038f9e7dac98d58f');
 var team1Name = 'Ninjas',
     team2Name = 'Pirates';
-
+var isCaptureMode = false;
 // http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
 function shuffle(array) {
     var counter = array.length;
@@ -51,6 +51,8 @@ function keepGameRunning(response, speechOutput) {
     response.ask(speechOutput,promtpOutPut);
 }
 
+
+
 function getTeamHealth(teamName, game) {
     var team = game.getTeam(teamName);
     var teamHealth = team[0].health + team[1].health;
@@ -59,11 +61,12 @@ function getTeamHealth(teamName, game) {
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.StartGameIntent = function (intent, session, response) {
-        response.ask('Okay, let\'s get started! Who will be playing today?', '');
-    },
+        storage.loadGame(session, function(game) {
+            game.save(function() {
+                response.ask('Okay, let\'s get started! Who will be playing today?', '');
+            });
+        });
 
-    intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
-        response.ask('Okay, let\'s get started! Who will be playing today?', '');
     },
 
     intentHandlers.HitIntent = function (intent, session, response) {
@@ -75,6 +78,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
                 if(team1Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team1Name + ' is defeated, KO!';
+                    game.reset();
                     response.tell(speechOutput);
                 } else if (team2Health == 0) {
                     var speechOutput = playerName + ' has been hit and team ' + team2Name + ' is defeated, KO!';
@@ -102,7 +106,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                      var speechOutput = {
                         speech: "<speak><audio src='https://s3.amazonaws.com/soundsnerf/Oxygen-Im-New-Mail.mp3'/></speak>",
                         type: AlexaSkill.speechOutputType.SSML
-                     }
+                    };
                 } else {
                     var speechOutput = playerName + ' is out.';
                 }
@@ -113,8 +117,6 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
             game.save(allDoneCallback.bind(this, game, speechOutput));
 
         });
-
-
     };
 
     intentHandlers.AddPlayerIntent = function (intent, session, response) {
@@ -136,7 +138,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         players = shuffle(players);
         var counter = 0;
 
-        storage.newGame(session, function(game) {
+        storage.loadGame(session, function(game) {
             players.forEach(function(item) {
                 if(item.length != 0) {
                         game.addPlayer(item);
@@ -165,29 +167,38 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
                 type: AlexaSkill.speechOutputType.SSML
             };
-
-
-            //Sende SMS to players for the capture mode
-            client.messages.create({
-                body: 'Your code is "Hacker',
-                to: '+4915158055841',
-                from: "+4915735985873 "
-
-            });
-
-
             game.save(allDoneCallback.bind(this, speechOutput));
-
-
         });
+    };
 
+    intentHandlers.StartCaptureGameIntent = function (intent, session, response) {
+        storage.loadGame(session, function(game) {
+            game.save(function() {
+                var codeWords = ["Hacker", "Club Mate", "Karaoke" , "Octocat", "Merge Conflict", "Coffee"];
+                var shuffledCodeWords = shuffle(codeWords);
+
+                //Sende SMS to players for the capture mode
+                client.messages.create({
+                    body: 'Your code is "'+ shuffledCodeWords[0] +'"',
+                    to: '+4915158055841',
+                    from: "+4915735985873 "
+                });
+
+                client.messages.create({
+                    body: 'Your code is "'+ shuffledCodeWords[1] +'"',
+                    to: "+4917661254477",
+                    from: "+4915735985873 "
+                });
+
+                response.ask('Okay, let\'s get started with a capture game! Who will be playing today?', '');
+            });
+        });
     };
 
     intentHandlers.ResetGameIntent = function (intent, session, response) {
-        storage.loadGame(session, function(game) {
+        isCaptureMode = false;
             game.reset();
             response.tell('Ready for the next match!');
-        });
     };
 
     //DEFAULT:

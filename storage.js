@@ -33,7 +33,16 @@ var storage = (function () {
                 team: "none"
             };
         },
-
+        setGameMode: function(gameMode){
+            this.data.gameMode = 2;
+        },
+        getGameMode: function(name) {
+            if(!this.data.gameMode){
+                return 1;
+            }else {
+                return this.data.gameMode;
+            }
+        },
         addToTeam: function(name, teamName) {
             if (!this.data.teamCount[teamName]) {
                 this.data.teamCount[teamName] = 1;
