@@ -154,9 +154,12 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 speech: '<speak><p><s>All players have been added, lets start having fun!</s>' +
                 '<s>our teams for today are:</s><s>' +
                 players[0] + ' and ' +
-                players[1] + ' are in team ' + team1Name + '</s><s> and ' +
+                players[1] + ' are in team ' + team1Name + '</s><s>. ' +
+                players[0] + ' is ' + team1Name + ' ' + '1 and ' +
+                players[1] + ' is ' + team1Name + ' ' + '2.' +
                 players[2] + ' and ' +
-                players[3] + ' are in team ' + team2Name + '.</s><s>I wish you all good luck and let the game begin!</s></p>'+
+                players[3] + ' are in team ' + team2Name + '.</s>' +
+                '<s>I wish you all good luck and let the game begin!</s></p>'+
                 '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
                 type: AlexaSkill.speechOutputType.SSML
             }
