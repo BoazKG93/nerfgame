@@ -20,7 +20,6 @@ var team1Name = 'Ninja Coders',
 
 function keepGameRunning(response, speechOutput) {
 
-
     var promtpOutPut = {
         speech: '<speak>'+
         '<break time="1s"/>' +
@@ -40,7 +39,7 @@ function getTeamHealth(teamName, game) {
 
 var registerIntentHandlers = function (intentHandlers, skillContext) {
     intentHandlers.HitIntent = function (intent, session, response) {
-        var allDoneCallback = function(game, success) {
+        var allDoneCallback = function(game, speechOutput, success) {
             if (success) {
 
                 var team1Health = getTeamHealth(team1Name, game),
@@ -85,7 +84,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 var speechOutput = playerName + ' is already dead.';
             }
 
-            game.save(allDoneCallback.bind(this, game));
+            game.save(allDoneCallback.bind(this, game, speechOutput));
 
         });
 
@@ -94,10 +93,8 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
     intentHandlers.AddPlayerIntent = function (intent, session, response) {
         
-        console.log('start intent');
-        var allDoneCallback = function(success) {
+        var allDoneCallback = function(speechOutput, success) {
             if (success) {
-                console.log('inside the success callback');
                 keepGameRunning(response, speechOutput);
             } else {
                 response.tell("Oops. Something went wrong.");
@@ -111,10 +108,8 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         var playerName4 = intent.slots.PlayerNameFour.value;
         var players = [playerName1, playerName2, playerName3, playerName4];
         var counter = 0;
-        console.log('before the loop');
 
         storage.newGame(session, function(game) {
-            console.log('starting the loop');
             players.forEach(function(item) {
                 if(item.length != 0) {
                         game.addPlayer(item);
@@ -127,7 +122,6 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                                     
                 }
             });
-            console.log('after the loop');
 
             var speechOutput = { 
                 speech: '<speak><p><s>All players have been added, lets start having fun!</s>' +
@@ -140,10 +134,16 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 type: AlexaSkill.speechOutputType.SSML
             }
 
-            game.save(allDoneCallback);
+            game.save(allDoneCallback.bind(this, speechOutput));
 
         });
         
+    };
+
+    intentHandlers.ResetGameIntent = function (intent, session, response) {
+        storage.loadGame(session, function(game) {
+            game.reset();
+        });
     };
 
     //DEFAULT:

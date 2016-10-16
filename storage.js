@@ -9,15 +9,17 @@ var storage = (function () {
      */
     function Game(session, data) {
         if (data) {
-            console.log("Restoring data");
-            console.log(data.data.S);
-            this.data = JSON.parse(data.data.S);
+            console.log('Game init');
+            console.log(data);
+            if (data.data) {
+                this.data = JSON.parse(data.data.S);    
+            } else {
+                this.data = data;
+            }
         } else {
-            console.log('Starting a new game!');
             this.data = {
                 players: {}
             };
-            console.log('Started game!');
         }
         this._session = session;
     }
@@ -131,8 +133,9 @@ var storage = (function () {
                 }
             });
         },
-        newGame: function (session) {
-            return new Game(session);
+        newGame: function (session, callback) {
+            callback(new Game(session));
+            return;
         },
     };
 })();
