@@ -155,12 +155,12 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 '<s>our teams for today are:</s><s>' +
                 players[0] + ' and ' +
                 players[1] + ' are in team ' + team1Name + '</s>' +
-                players[0] + ' is ' + team1Name + ' ' + '1 and ' +
-                players[1] + ' is ' + team1Name + ' ' + '2.' +
-                players[2] + ' and ' +
-                players[3] + ' are in team ' + team2Name + '.' +
-                players[2] + ' is ' + team2Name + ' ' + '1 and ' +
-                players[3] + ' is ' + team2Name + ' ' + '2.' +
+                '<s>' + players[0] + ' is ' + team1Name + ' ' + '1 and ' +
+                players[1] + ' is ' + team1Name + ' ' + '2</s>' +
+                '<s>' + players[2] + ' and ' +
+                players[3] + ' are in team ' + team2Name + '</s>' +
+                '<s>' + players[2] + ' is ' + team2Name + ' ' + '1 and ' +
+                players[3] + ' is ' + team2Name + ' ' + '2</s>' +
                 '<s>I wish you all good luck and let the game begin!</s></p>'+
                 '<s>3<break time="1s"/>2<break time="1s"/>1<break time="1s"/>Go!</s></speak>',
                 type: AlexaSkill.speechOutputType.SSML
@@ -204,7 +204,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
     intentHandlers['AMAZON.CancelIntent'] = function (intent, session, response) {
         if (skillContext.needMoreHelp) {
-            response.tell('Okay. See you!');
+            response.tell('Okay. See ya!');
         } else {
             response.tell('');
         }
@@ -212,7 +212,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
 
     intentHandlers['AMAZON.StopIntent'] = function (intent, session, response) {
         if (skillContext.needMoreHelp) {
-            response.tell('Okay. See you!');
+            response.tell('Okay. See ya!');
         } else {
             response.tell('');
         }
