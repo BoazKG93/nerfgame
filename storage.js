@@ -50,7 +50,7 @@ var storage = (function () {
                 this.data.teamCount[teamName]++;
             }
             this.data.players[name].team = teamName;
-            this.data.players[name].callout = teamName + " " + this.data.teamCount[teamName];
+            this.data.players[name].callout = teamName.slice(0, -1) + " " + this.data.teamCount[teamName];
         },
 
         decreaseHealth: function(name) {
