@@ -41,7 +41,7 @@ function shuffle(array) {
     return array;
 }
 
-var complements = [ "Wow that's a great shot!", "Nice!", "Impressive"];
+var complements = ["Wow that's a great shot!", "Nice!", "Impressive"];
 
 function keepGameRunning(response, speechOutput) {
 
@@ -138,8 +138,8 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 game.decreaseHealth(playerName);
                 if(playerHealth > 0) {
                     var randomNum = Math.floor((Math.random() * 10) + 1);
-                    if(randomNum > 7) {
-                        var complement = complements[Math.floor((Math.random() * 3) + 1)];
+                    if(randomNum > 0) {
+                        var complement = complements[Math.floor((Math.random() * 2) + 1)];
                     } else {
                         var complement = "";
                     }

@@ -31,7 +31,7 @@ var storage = (function () {
         addPlayer: function(name) {
             this.data.players[name] = {
                 name: name,
-                health: 3,
+                health: 2,
                 team: "none"
             };
         },
