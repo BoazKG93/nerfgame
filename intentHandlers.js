@@ -95,6 +95,7 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
         running = false;
         var playerName = intent.slots.PlayerName.value;
         storage.loadGame(session, function(game) {
+            console.log("playerName " + playerName);
             var player = game.getPlayerByCallout(playerName);
             var playerHealth = player.health;
 

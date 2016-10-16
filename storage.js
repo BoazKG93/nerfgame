@@ -1,6 +1,8 @@
 'use strict';
 var AWS = require("aws-sdk");
 
+var numbers = ["One", "Two", "Three", "Four"];
+
 var storage = (function () {
     var dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
@@ -50,7 +52,7 @@ var storage = (function () {
                 this.data.teamCount[teamName]++;
             }
             this.data.players[name].team = teamName;
-            this.data.players[name].callout = teamName + " " + this.data.teamCount[teamName];
+            this.data.players[name].callout = teamName + " " + numbers[this.data.teamCount[teamName] - 1];
         },
 
         decreaseHealth: function(name) {
@@ -68,7 +70,7 @@ var storage = (function () {
         getPlayerByCallout: function(callout) {
             for (var playerName in this.data.players) {
                 var player = this.data.players[playerName];
-                if (player.callout.valueOf() == callout.valueOf()) {
+                if (player.callout.toLowerCase().valueOf() == callout.toLowerCase().valueOf()) {
                     return player;
                 }
             }
