@@ -13,7 +13,7 @@ var textHelper = require('./textHelper'),
     storage = require('./storage'),
     AlexaSkill = require('./AlexaSkill');
 var running = true;
-
+var client = require('twilio')('AC86c3899bd3d636ea0ca11f08852c62d7', 'abeafc9d2e485adb038f9e7dac98d58f');
 var team1Name = 'Ninja Coders',
     team2Name = 'Teddy Bears';
 
@@ -134,7 +134,18 @@ var registerIntentHandlers = function (intentHandlers, skillContext) {
                 type: AlexaSkill.speechOutputType.SSML
             }
 
+
+            //Sende SMS to players for the capture mode
+            client.messages.create({
+                body: 'Your code is "Hacker',
+                to: '+4915158055841',
+                from: "+4915735985873 "
+
+            });
+
+
             game.save(allDoneCallback.bind(this, speechOutput));
+
 
         });
         
