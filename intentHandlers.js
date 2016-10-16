@@ -14,8 +14,8 @@ var textHelper = require('./textHelper'),
     AlexaSkill = require('./AlexaSkill');
 var running = true;
 var client = require('twilio')('AC86c3899bd3d636ea0ca11f08852c62d7', 'abeafc9d2e485adb038f9e7dac98d58f');
-var team1Name = 'Ninja Coders',
-    team2Name = 'Teddy Bears';
+var team1Name = 'Ninjas',
+    team2Name = 'Pirates';
 
 // http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
 function shuffle(array) {
