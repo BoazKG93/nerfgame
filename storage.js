@@ -1,6 +1,8 @@
 'use strict';
 var AWS = require("aws-sdk");
 
+var calloutTags = ["Blue", "Red", "Green"];
+
 var storage = (function () {
     var dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
@@ -50,7 +52,7 @@ var storage = (function () {
                 this.data.teamCount[teamName]++;
             }
             this.data.players[name].team = teamName;
-            this.data.players[name].callout = teamName.slice(0, -1) + " " + this.data.teamCount[teamName];
+            this.data.players[name].callout = calloutTags[this.data.teamCount[teamName]-1] + " " + teamName.slice(0, -1);
         },
 
         decreaseHealth: function(name) {
