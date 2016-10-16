@@ -38,11 +38,31 @@ var storage = (function () {
         setGameMode: function(gameMode){
             this.data.gameMode = gameMode;
         },
-        getGameMode: function(name) {
+        setCodeWord1: function(codeword){
+            this.data.codeWord1 = codeword;
+        },
+        setCodeWord2: function(codeword){
+            this.data.codeWord2 = codeword;
+        },
+        getGameMode: function() {
             if(!this.data.gameMode){
                 return 1;
             }else {
                 return this.data.gameMode;
+            }
+        },
+        getCodeWord1: function() {
+            if(!this.data.codeWord1){
+                return null;
+            }else {
+                return this.data.codeWord1;
+            }
+        },
+        getCodeWord2: function() {
+            if(!this.data.codeWord2){
+                return null;
+            }else {
+                return this.data.codeWord2;
             }
         },
 
